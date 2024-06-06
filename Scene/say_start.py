@@ -21,6 +21,7 @@ class say_start_scene:
         self.title_1 = pygame.transform.scale(self.title_1_raw, (500, 500))
         self.title = [self.title_0, self.title_1]
         self.title_idx = 0
+
         pass
     
     def update(self):
@@ -47,6 +48,9 @@ class say_start_scene:
                     self.title_idx = 1
 
     def action_collect(self, main_scene):
+        if self.counter == 1:
+            select_sound = pygame.mixer.Sound("sounds/select.wav")
+            select_sound.play()
         if self.counter == 60:
             return True
         for event in pygame.event.get():
@@ -60,7 +64,6 @@ class say_start_scene:
             if e == K_RETURN:
                 self.start = 1
             
-        print(self.counter)
         
         return all(v['input'] == VOICE.START for v in main_scene.user_input.values()) and len(main_scene.user_input) >= 2
         
