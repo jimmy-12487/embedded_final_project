@@ -1,7 +1,8 @@
 import pygame
 from pygame.locals import *
 from enums import *
-import time
+from configs import *
+
 
 class say_start_scene:
     def __init__(self):
@@ -9,11 +10,11 @@ class say_start_scene:
         self.say_start_raw_alpha = 0
         self.say_start_raw_direction = 1
         self.say_start_raw_stride = 5
-        self.say_start_raw_rect = (300, 550)
+        self.say_start_raw_rect = (WINDOW_WIDTH // 3, 550)
         self.title_0_raw = pygame.image.load(f'SayStart/title_1.png').convert_alpha()
         self.title_1_raw = pygame.image.load(f'SayStart/title_0.png').convert_alpha()
         self.start = 0
-        self.title_rect = (330, 45)
+        self.title_rect = (WINDOW_WIDTH // 3, 45)
         self.counter = 0
         
         self.say_start = pygame.transform.scale(self.say_start_raw, (600, 150))
@@ -28,7 +29,10 @@ class say_start_scene:
         
         self.say_start_raw_alpha += self.say_start_raw_direction * self.say_start_raw_stride
         
-        if self.say_start_raw_alpha > 255:
+        if self.start == 1:
+            self.say_start_raw_alpha = 0
+        
+        elif self.say_start_raw_alpha > 255:
             self.say_start_raw_alpha = 255
             self.say_start_raw_direction = -1
             
@@ -57,10 +61,10 @@ class say_start_scene:
             
             e = event.dict['key']
             
-            if e == K_RETURN:
+            if e == K_RETURN and self.start == 0:
+                self.say_start_raw_alpha = 255
                 self.start = 1
             
-        print(self.counter)
         
         return all(v['input'] == VOICE.START for v in main_scene.user_input.values()) and len(main_scene.user_input) >= 2
         

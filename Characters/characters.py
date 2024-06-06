@@ -1,6 +1,7 @@
 import pygame
 import os
 from enums import *
+from configs import *
 
 ANIMATION_FRAMES = 20
 MOVEMENT_FRAMES = 5
@@ -28,10 +29,8 @@ class GameObjectState():
 
 class GameObject():
     def __init__(self):
+        
         self.attack_image = None
-
-        self.widow_width = self.widow_width
-        self.window_height = self.window_height
         
         self.state = STATES.INIT
         self.next_state = STATES.IDLE
@@ -41,6 +40,9 @@ class GameObject():
         
         self.attack_state = ATTACK_MOVEMENT.NONE
         self.next_attack_state = ATTACK_MOVEMENT.NONE
+        
+        self.health_bar_topleft = HEALTH_BAR_POSITION[self.position]['X'], HEALTH_BAR_POSITION[self.position]['Y']
+        self.health_bar_icon_topleft = HEALTH_BAR_ICON_POSITION[self.position]['X'], HEALTH_BAR_ICON_POSITION[self.position]['Y']
         
         self.state_counter = 0
         self.state_animation_frame_counter = 0
@@ -70,7 +72,7 @@ class GameObject():
             x_offset = 50  
             y_offset = 50
             
-            if self.is_left:
+            if self.position == 'LEFT' :
                 return (self.x_position + 300, self.y_position + y_offset)
             else:
                 return (self.x_position - 150, self.y_position + y_offset)
@@ -86,19 +88,15 @@ class GameObject():
     def __make_health_image(self):
         self.health_image = pygame.transform.scale(
             pygame.image.load(f'./Characters/Health/{(self.health // self.health_unit) * 10}.png').convert_alpha(),
-            (512, 64)
+            (HEALTH_BAR_WIDTH, HEALTH_BAR_HIEGHT)
         )
-        self.health_rect = self.health_image.get_rect()
-        self.health_rect.topleft = self.health_bar_topleft
         
     def __make_health_icon_image(self):
         self.health_icon_image = pygame.transform.scale(
             pygame.image.load(f'{self.path}/health_bar.png').convert_alpha(),
-            (160, 160)
+            (HEALTH_BAR_ICON_SIZE, HEALTH_BAR_ICON_SIZE)
         )
-        
-        self.health_icon_rect = self.health_icon_image.get_rect()
-        self.health_icon_rect.topleft = self.health_bar_icon_topleft
+    
     
     def __make_attack_image(self):
         if self.attack_state != ATTACK_MOVEMENT.NONE:
@@ -161,16 +159,18 @@ class GameObject():
         
     def get_objects(self):
         objects = []
-        if self.is_left:
-            objects += [(self.main_image, (self.x_position, self.y_position)), (self.health_image, self.health_rect), (self.health_icon_image, self.health_icon_rect)]
+        if self.position == 'LEFT':
+            objects += [(self.main_image, (self.x_position, self.y_position)), 
+                        (self.health_image, self.health_bar_topleft), 
+                        (self.health_icon_image, self.health_bar_icon_topleft)]
         else:
             objects += [(pygame.transform.flip(self.main_image, True, False), (self.x_position, self.y_position)),
-                        (pygame.transform.flip(self.health_image, True, False), self.health_rect),   
-                        (pygame.transform.flip(self.health_icon_image, True, False), self.health_icon_rect)
+                        (pygame.transform.flip(self.health_image, True, False), self.health_bar_topleft),   
+                        (pygame.transform.flip(self.health_icon_image, True, False), self.health_bar_icon_topleft)
                         ]
             
         if self.attack_image is not None:
-            if self.is_left:
+            if self.position == 'LEFT':
                 objects.append((self.attack_image, self.__where_is_mouth()))
             else:
                 objects.append((pygame.transform.flip(self.attack_image, True, False), self.__where_is_mouth()))
@@ -178,48 +178,37 @@ class GameObject():
     
 class Chicken(GameObject, pygame.sprite.Sprite):
     
-    def __init__(self, widow_width, window_height, main_topleft, health_bar_topleft, health_bar_icon_topleft, is_left=True):
+    def __init__(self, position='LEFT'):
         
         self.path = './Characters/Chicken'
         self.race = 'chick'
+        self.position = position
+    
+        self.x_position, self.y_position = CHICKEN_INIT_POSITION[position]['X'], CHICKEN_INIT_POSITION[position]['Y']
         
-        self.x_position, self.y_position = main_topleft
-        self.widow_width = widow_width
-        self.window_height = window_height
+        self.width, self.height = CHICKEN_WIDTH, CHICKEN_HEIGHT
         
-        self.width = 300
-        self.height = 300
-        
-        self.health = 100
-        self.health_unit = 10
-        
-        self.health_bar_topleft = health_bar_topleft
-        self.health_bar_icon_topleft = health_bar_icon_topleft
-        
-        self.is_left = is_left
+        self.health, self.health_unit = 100, 10
+    
         
         super().__init__()
         
 class Dinosaur(GameObject, pygame.sprite.Sprite):
     
-    def __init__(self, widow_width, window_height, main_topleft, health_bar_topleft, health_bar_icon_topleft, is_left=True):
+    def __init__(self, position='LEFT'):
         
         self.path = './Characters/Dinosaur'
         self.race = 'dino'
+        self.position = position
         
-        self.x_position, self.y_position = main_topleft
+        self.x_position, self.y_position = DINO_INIT_POSITION[position]['X'], DINO_INIT_POSITION[position]['Y']
         
-        self.widow_width = widow_width
-        self.window_height = window_height
-        self.width = 450
-        self.height = 450
+        self.width, self.height = DINO_WIDTH, DINO_HEIGHT
         
-        self.health = 200
-        self.health_unit = 20
+        self.health, self.health_unit = 200, 20
         
-        self.health_bar_topleft = health_bar_topleft
-        self.health_bar_icon_topleft = health_bar_icon_topleft
-        self.is_left = is_left
+        
+        
         
         super().__init__()
         

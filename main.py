@@ -8,6 +8,7 @@ from Scene.say_start import say_start_scene
 from Scene.ready import ready_scene
 from Scene.playing import playing_scene
 from enums import *
+from configs import *
 
     
 import threading
@@ -21,10 +22,7 @@ ADDR = (SERVER, PORT)
 FORMAT = 'UTF-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
-BACKGROUND_COLOR = (255, 255, 255)
-ROLE_NUMBER = 2
+
 
 class MainGame():
     def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR, caption=None):
@@ -46,15 +44,10 @@ class MainGame():
     
     def __create_role(self, p):
         if p[0] == 0:
-            if p[1] == True:
-                return characters.Chicken(WINDOW_WIDTH, WINDOW_HEIGHT, (100, WINDOW_HEIGHT - 412), (80, 0), (0, 0), p[1])    
-            else:
-                return characters.Chicken(WINDOW_WIDTH, WINDOW_HEIGHT, (660, WINDOW_HEIGHT - 412), (630, 0), (1052, 0), p[1])    
+            return characters.Chicken(p[1])    
         elif p[0] == 1:
-            if p[1] == True:
-                return characters.Dinosaur(WINDOW_WIDTH, WINDOW_HEIGHT, (100, WINDOW_HEIGHT - 532), (80, 0), (0, 0), p[1])    
-            else:
-                return characters.Dinosaur(WINDOW_WIDTH, WINDOW_HEIGHT, (660, WINDOW_HEIGHT - 532), (630, 0), (1052, 0), p[1])    
+            return characters.Dinosaur(p[1])    
+            
     
     def __update(self):
         self.surface.fill(BACKGROUND_COLOR)
@@ -72,6 +65,7 @@ class MainGame():
             self.game_state += 1
             
             if self.game_state == GAME_STATE.PLAYING:
+                print(self.player_status)
                 self.scenes.append(playing_scene([self.__create_role(ps) for ps in self.player_status]))
             
             self.current_scene = self.scenes[self.game_state]

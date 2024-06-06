@@ -2,49 +2,39 @@ import pygame
 from Characters.characters import *
 from pygame.locals import *
 from enums import *
-
-
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
+from configs import *
 
 class player_choosing:
     def __init__(self, is_left):
         self.pick_states = ['chick', 'dino_picked']
         self.ready = False
-        self.is_left = is_left
+        self.position = 'LEFT' if is_left else 'RIGHT'
         self.available_characters_raw = [pygame.image.load(f'Ready/{state}.png').convert_alpha() for state in self.pick_states]
-        self.rect = (0, 0)
         
-        self.ready_image = pygame.transform.scale(
-                    pygame.image.load(f'Ready/ready.png').convert_alpha(), (300, 180))
+        self.ready_image = pygame.transform.scale(pygame.image.load(f'Ready/ready.png').convert_alpha(), (300, 180))
         
     def update(self):
         self.available_characters_raw = [pygame.image.load(f'Ready/{state}.png').convert_alpha() for state in self.pick_states]
-        self.available_characters = [pygame.transform.scale(r, (150, 150)) for r in self.available_characters_raw]
+        self.available_characters = [pygame.transform.scale(r, (AVAIABLE_ICON_SIZE, AVAIABLE_ICON_SIZE)) for r in self.available_characters_raw]
         
         if 'chick_picked' in self.pick_states:
-            self.character = self.main_image = pygame.transform.scale(
-                        pygame.image.load(f'./Characters/Chicken/init_0.png').convert_alpha(), (300, 300))
-            self.rect = (100, WINDOW_HEIGHT - 412)
-            
+            self.character = pygame.transform.scale( pygame.image.load(f'./Characters/Chicken/init_0.png').convert_alpha(), (CHICKEN_WIDTH, CHICKEN_HEIGHT))
+            self.rect = (CHICKEN_INIT_POSITION[self.position]['X'], CHICKEN_INIT_POSITION[self.position]['Y'])
+                
         elif 'dino_picked' in self.pick_states:
-            self.character = self.main_image = pygame.transform.scale(
-                        pygame.image.load(f'./Characters/Dinosaur/init_0.png').convert_alpha(), (450, 450))
-            self.rect = (100, WINDOW_HEIGHT - 532)
+            self.character = pygame.transform.scale(pygame.image.load(f'./Characters/Dinosaur/init_0.png').convert_alpha(), (DINO_WIDTH, DINO_HEIGHT))
+            self.rect = (DINO_INIT_POSITION[self.position]['X'], DINO_INIT_POSITION[self.position]['Y'])
         
-        
-        
-        if not self.is_left:
+        if self.position == 'RIGHT':
             self.character = pygame.transform.flip(self.character, True, False)
-            self.rect = (self.rect[0] + 560, self.rect[1])
     
     def get_objects(self):
         objects = [(self.character, self.rect)]
-        if self.is_left:
-            objects += [(c, (100 + 150*i, 100)) for i, c in enumerate(self.available_characters)]
+        if self.position == 'LEFT':
+            objects += [(c, (WALL_OFFSET + AVAIABLE_ICON_SIZE*i, WALL_OFFSET)) for i, c in enumerate(self.available_characters)]
             
         else:
-            objects += [(c, (900 + 150*i, 100)) for i, c in enumerate(self.available_characters)]
+            objects += [(c, (WINDOW_WIDTH - WALL_OFFSET - AVAIABLE_ICON_SIZE*i, WALL_OFFSET)) for i, c in enumerate(self.available_characters, 1)]
         
         if self.ready:
             objects += [(self.ready_image, (self.rect[0] + 50, self.rect[1] + 250))]            
@@ -73,13 +63,13 @@ class ready_scene:
             e = event.dict['key']
             
             if e == K_RETURN:
-                main_scene.player_status = [(0, p.is_left) if 'chick_picked' in p.pick_states else (1, p.is_left) for p in self.players]
+                main_scene.player_status = [(0, p.position) if 'chick_picked' in p.pick_states else (1, p.position) for p in self.players]
                 return True
             
         for v in main_scene.user_input.values():
             if self.players[v['index']].ready:
                 continue
-            print(v)
+            
             if v['input'] == VOICE.READY:
                 self.players[v['index']].ready = True
             elif v['input'] == VOICE.CHICK:
