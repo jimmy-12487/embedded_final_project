@@ -8,6 +8,7 @@ from Scene.say_start import say_start_scene
 from Scene.ready import ready_scene
 from Scene.playing import playing_scene
 from enums import *
+
     
 import threading
 import socket
@@ -125,7 +126,7 @@ def handle_client(conn, addr):
 
 def start():
     server.listen()
-    
+    print(f'RUNNING SERVER ON {SERVER}:{PORT}')
     try:
         while True:
             conn, addr = server.accept()
@@ -143,7 +144,8 @@ if __name__ == '__main__':
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(ADDR)
     
-    threading.Thread(target = start).start()
+    if 'debug' not in sys.argv:
+        threading.Thread(target = start).start()
     
     
     game.start()

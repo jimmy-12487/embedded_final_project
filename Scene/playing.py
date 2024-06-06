@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from enums import *
 
 class playing_scene:
     def __init__(self, roles):
@@ -20,18 +21,28 @@ class playing_scene:
             
             e = event.dict['key']
             
+            if e == K_d:
+                self.roles[0].next_state = STATES.ATTACK
+                self.roles[0].next_attack_state = ATTACK_MOVEMENT.ATTACK1
+            elif e == K_w:
+                self.roles[0].health += 5
+            elif e == K_s:
+                self.roles[0].health -= 5
+            
+            elif e == K_RIGHT:
+                self.roles[1].next_state = STATES.ATTACK
+                self.roles[1].next_attack_state = ATTACK_MOVEMENT.ATTACK1
+            elif e == K_UP:
+                self.roles[1].health += 5
+            elif e == K_DOWN:
+                self.roles[1].health -= 5
+            
         return False
     
     def get_objects(self):
         objects = []
         for role in self.roles:
-            if role.is_left:
-                objects += [(role.main_image, role.main_rect), (role.health_image, role.health_rect), (role.health_icon_image, role.health_icon_rect)]
-            else:
-                objects +=[(pygame.transform.flip(role.main_image, True, False), role.main_rect),
-                           (pygame.transform.flip(role.health_image, True, False), role.health_rect),
-                           (pygame.transform.flip(role.health_icon_image, True, False), role.health_icon_rect)
-                           ]
+            objects += role.get_objects()
             
         return objects
         

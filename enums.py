@@ -4,9 +4,8 @@ class STATES(Enum):
     INIT = 0
     IDLE = 1
     MOVING = 2
-    ATTACK1 = 3
-    ATTACK2 = 4
-    DEFEND = 5
+    ATTACK = 3
+    DEFEND = 4
 
 class DIRECTION(Enum):
     STILL = 0
@@ -24,7 +23,8 @@ class VOICE(IntEnum):
     DINO = 2
     READY = 3
 
-class MOVEMENT(Enum):
-    DEFEND = 0
-    ATTACK1 = 1
-    ATTACK2 = 2
+class ATTACK_MOVEMENT(Enum):
+    NONE = 0
+    DEFEND = 1
+    ATTACK1 = 2
+    ATTACK2 = 3
