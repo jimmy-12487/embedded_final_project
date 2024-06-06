@@ -87,14 +87,16 @@ class MainGame():
             if self.idx % 1e6 == 0:
                 for k, v in self.user_input.items():
                     print(k, v)
+            self.__update()
             if self.action_collect() is None:
                 pygame.quit()
                 break
-            self.__update()
+            
 
             pygame.display.update()
             self.main_clock.tick(60)
-          
+            self.idx += 1
+            
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
     IP, port = addr
