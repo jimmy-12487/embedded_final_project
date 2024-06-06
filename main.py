@@ -143,7 +143,6 @@ def start():
 game = MainGame(WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR)
 
 if __name__ == '__main__':
-
     
     if 'debug' not in sys.argv:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
