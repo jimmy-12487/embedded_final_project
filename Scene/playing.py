@@ -41,6 +41,10 @@ class playing_scene:
                 self.roles[0].next_state = STATES.DIE
             if self.roles[1].health <= 0:
                 self.roles[1].next_state = STATES.DIE
+            if self.roles[0].state == STATES.DIE:
+                self.roles[0].next_state = STATES.DIE
+            if self.roles[1].state == STATES.DIE:
+                self.roles[1].next_state = STATES.DIE
             
         return False
     

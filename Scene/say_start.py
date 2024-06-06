@@ -59,14 +59,11 @@ class say_start_scene:
             
             if e == K_RETURN:
                 self.start = 1
-            
-        print(self.counter)
         
         return all(v['input'] == VOICE.START for v in main_scene.user_input.values()) and len(main_scene.user_input) >= 2
         
 
     def get_objects(self):
-        # print(self.title_idx)
         return [(self.say_start, self.say_start_raw_rect), (self.title[self.title_idx], self.title_rect)]
 
 if __name__ == '__main__':
