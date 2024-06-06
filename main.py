@@ -27,7 +27,8 @@ DISCONNECT_MESSAGE = "!DISCONNECT"
 class MainGame():
     def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR, caption=None):
         pygame.init()
-        
+        pygame.mixer.init()
+
         self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.main_clock = pygame.time.Clock()
         '''
@@ -35,12 +36,14 @@ class MainGame():
         '''
         self.scenes = [say_start_scene(), ready_scene()]
         
-        
         self.game_state = GAME_STATE.SAY_START
         self.current_scene = self.scenes[self.game_state]
         
         self.surface.fill(BACKGROUND_COLOR)
         self.user_input = {}
+
+        self.music_list = ["sounds/start.mp3"]
+        pygame.mixer.music.load(self.music_list[0])
     
     def __create_role(self, p):
         if p[0] == 0:
@@ -62,6 +65,7 @@ class MainGame():
             return None
         
         if action_response == True:
+            pygame.mixer.music.stop()
             self.game_state += 1
             
             if self.game_state == GAME_STATE.PLAYING:
@@ -74,9 +78,13 @@ class MainGame():
             return True
     
         return False
-      
+    
+    def play_music(self):
+        pygame.mixer.music.play()
+
     def start(self):  
         self.idx = 0
+        self.play_music()
         while True:
             if self.idx % 1e6 == 0:
                 for k, v in self.user_input.items():

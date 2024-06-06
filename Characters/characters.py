@@ -130,9 +130,14 @@ class GameObject():
 
     
     def update_state(self):
+        print(self.state)
         if self.state != self.next_state:
             self.state_counter = 0
-        self.state, self.next_state = self.next_state, STATES.IDLE
+        self.state = self.next_state
+        if self.state == STATES.DIE:
+            self.next_state = STATES.DIE
+        else:
+            self.next_state = STATES.IDLE
         self.direction, self.next_direction = self.next_direction, DIRECTION.STILL
         self.attack_state, self.next_attack_state = self.next_attack_state, ATTACK_MOVEMENT.NONE
     

@@ -28,7 +28,7 @@ class playing_scene:
                 self.roles[0].health += 5
             elif e == K_s:
                 self.roles[0].health -= 5
-            
+                
             elif e == K_RIGHT:
                 self.roles[1].next_state = STATES.ATTACK
                 self.roles[1].next_attack_state = ATTACK_MOVEMENT.ATTACK1
@@ -36,6 +36,15 @@ class playing_scene:
                 self.roles[1].health += 5
             elif e == K_DOWN:
                 self.roles[1].health -= 5
+            
+            if self.roles[0].health <= 0:
+                self.roles[0].next_state = STATES.DIE
+            if self.roles[1].health <= 0:
+                self.roles[1].next_state = STATES.DIE
+            if self.roles[0].state == STATES.DIE:
+                self.roles[0].next_state = STATES.DIE
+            if self.roles[1].state == STATES.DIE:
+                self.roles[1].next_state = STATES.DIE
             
         return False
     
