@@ -145,8 +145,11 @@ class GameObject():
                         (pygame.transform.flip(self.health_image, True, False), self.health_rect),   
                         (pygame.transform.flip(self.health_icon_image, True, False), self.health_icon_rect)
                         ]
-        if self.attack_image is not None:   
-            objects.append((self.attack_image, ((self.main_rect[0], self.main_rect[1]))))
+        if self.attack_image is not None:
+            if self.is_left:
+                objects.append((self.attack_image, ((self.main_rect[0], self.main_rect[1]))))
+            else:
+                objects.append((pygame.transform.flip(self.attack_image, True, False), ((self.main_rect[0], self.main_rect[1]))))
         return objects
     
 class Chicken(GameObject, pygame.sprite.Sprite):
