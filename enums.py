@@ -4,7 +4,9 @@ class STATES(Enum):
     INIT = 0
     IDLE = 1
     MOVING = 2
-    ATTACK = 3
+    ATTACK1 = 3
+    ATTACK2 = 4
+    DEFEND = 5
 
 class DIRECTION(Enum):
     STILL = 0

@@ -16,7 +16,6 @@ class GameObject():
         
         self.main_rect = self.main_image.get_rect()
         self.main_rect.topleft = self.main_topleft
-        
         self.health_image = pygame.transform.scale(
                                 pygame.image.load(f'./Characters/Health/100.png').convert_alpha(),
                             (512, 64))
@@ -98,7 +97,50 @@ class GameObject():
             if self.state != STATES.IDLE or self.next_state == STATES.IDLE:
                 return
         self.update_state()
-        
+        if self.health/self.init > 0.9:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/100.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0.8:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/90.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0.7:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/80.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0.6:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/70.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0.5:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/60.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0.4:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/50.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0.3:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/40.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0.2:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/30.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0.1:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/20.png').convert_alpha(),
+                            (512, 64))
+        elif self.health/self.init > 0:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/10.png').convert_alpha(),
+                            (512, 64))
+        else:
+            self.health_image = pygame.transform.scale(
+                                pygame.image.load(f'./Characters/Health/0.png').convert_alpha(),
+                            (512, 64))
         self.main_image = pygame.transform.scale(
             pygame.image.load(f'{self.path}/{self.state.name.lower()}_{self.state_counter}.png').convert_alpha(), 
             (self.width, self.height)
@@ -131,6 +173,8 @@ class Chicken(GameObject, pygame.sprite.Sprite):
         self.window_height = window_height
         self.width = 300
         self.height = 300
+        self.health_init = 100
+        self.health = 100
         self.health_bar_topleft = health_bar_topleft
         self.health_bar_icon_topleft = health_bar_icon_topleft
         self.is_left = is_left
@@ -146,6 +190,8 @@ class Dinosaur(GameObject, pygame.sprite.Sprite):
         self.window_height = window_height
         self.width = 450
         self.height = 450
+        self.health = 200
+        self.health_init = 200
         self.health_bar_topleft = health_bar_topleft
         self.health_bar_icon_topleft = health_bar_icon_topleft
         self.is_left = is_left
