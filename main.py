@@ -141,10 +141,10 @@ def start():
 game = MainGame(WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR)
 
 if __name__ == '__main__':
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(ADDR)
     
     if 'debug' not in sys.argv:
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.bind(ADDR)
         threading.Thread(target = start).start()
     
     
