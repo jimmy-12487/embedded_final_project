@@ -52,10 +52,9 @@ class say_start_scene:
                     self.title_idx = 1
 
     def action_collect(self, main_scene):
-        if self.counter == 1:
+        if self.counter == 60:
             select_sound = pygame.mixer.Sound("sounds/select.wav")
             select_sound.play()
-        if self.counter == 60:
             return True
         for event in pygame.event.get():
             if event.type == QUIT:
