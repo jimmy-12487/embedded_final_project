@@ -4,12 +4,6 @@ from enums import *
 from configs import *
 import math
 
-ANIMATION_FRAMES = 20
-MOVEMENT_FRAMES = 5
-PIXEL = 1
-
-DINO_ATTACK1_X_LEFT_OFFSET = 20
-
 # ** TODO
 class GameObjectState():
     def __init__(self):
@@ -46,10 +40,10 @@ class GameObject():
         self.health_bar_icon_topleft = HEALTH_BAR_ICON_POSITION[self.position]['X'], HEALTH_BAR_ICON_POSITION[self.position]['Y']
         
         self.state_counter = 0
-        self.state_animation_frame_counter = 0
-        self.movement_frame_counter = 0
         
-        self.movements = (0, 0)
+        self.ticks = 0
+        self.movement_counter = 0
+        
         
         self.state_frame_num = {}
         
@@ -108,18 +102,21 @@ class GameObject():
         else:
             self.attack_image = None
     
-    def update_movement(self):
+    def move(self):
         if self.direction == DIRECTION.STILL:
-           self.movements = (0, 0) 
+           self.x_movements, self.y_movements = 0, 0
            
-        self.main_rect.topleft = tuple(position + movement for position, movement in zip(self.main_rect.topleft, self.movements))
+        self.x_position, self.y_position = self.x_position + self.x_movements, self.y_position + self.y_movements
         
-        if self.movement_frame_counter != MOVEMENT_FRAMES:
-            self.movement_frame_counter += 1
+        if self.movement_counter != TICKS_PER_MOVEMENT:
+            self.movement_counter += 1
             return 
         
-        self.movement_frame_counter = 0
+        self.movement_counter = 0
+        self.update_movement()
         
+    
+    def update_movement(self):
         if self.state == STATES.MOVING:
             if self.direction == DIRECTION.STILL:
                 self.movements = (0, 0)
@@ -127,40 +124,38 @@ class GameObject():
                 self.movements = (-PIXEL, 0)
             elif self.direction == DIRECTION.RIGHT:
                 self.movements = (PIXEL, 0)
-        
-
     
     def update_state(self):
-        if self.state != self.next_state:
-            self.state_counter = 0
-        self.state = self.next_state
-        if self.state == STATES.DIE:
-            self.next_state = STATES.DIE
-        else:
-            self.next_state = STATES.IDLE
-        self.direction, self.next_direction = self.next_direction, DIRECTION.STILL
-        self.attack_state, self.next_attack_state = self.next_attack_state, ATTACK_MOVEMENT.NONE
-    
-    def update_animation(self):
-        if self.state_animation_frame_counter != ANIMATION_FRAMES:
-            self.state_animation_frame_counter += 1
+        if self.ticks != TICKS_PER_FRAME:
+            self.ticks += 1
             if self.state != STATES.IDLE or self.next_state == STATES.IDLE:
                 return
         
-        self.update_state()
+        self.ticks = 0
+        
+        if self.state != self.next_state:
+            self.state_counter = 0
+        
+        self.state, self.next_state = self.next_state, STATES.IDLE
+        self.direction, self.next_direction = self.next_direction, DIRECTION.STILL
+        self.attack_state, self.next_attack_state = self.next_attack_state, ATTACK_MOVEMENT.NONE
+
+        self.update_animation()
+        
+    def update_animation(self):
+
         self.__make_main_image()
         self.__make_health_image()        
         self.__make_attack_image()
-
-            
-        self.state_animation_frame_counter = 0
+        
         self.state_counter += 1
         if self.state_counter >= self.state_frame_num[self.state.name]:
             self.state_counter = 0
     
     def update(self):
-        # self.update_movement()
-        self.update_animation()
+        self.move()
+        self.update_state()
+        
         
     def get_objects(self):
         objects = []

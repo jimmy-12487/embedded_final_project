@@ -11,6 +11,9 @@ class playing_scene:
         for role in self.roles:
             role.update()
     
+    # def interaction_arbitration(self):
+        
+    
     def action_collect(self, main_scene):
         for event in pygame.event.get():
             if event.type == QUIT:
