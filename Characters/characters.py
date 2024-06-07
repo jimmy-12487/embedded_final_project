@@ -43,6 +43,7 @@ class GameObject():
         self.ticks = 0
         self.movement_counter = 0
         
+        self.x_movements, self.y_movements = 0, 0
         
         self.state_frame_num = {}
         
@@ -100,30 +101,35 @@ class GameObject():
             )
         else:
             self.attack_image = None
-    
-    def move(self):
-        if self.direction == DIRECTION.STILL:
-           self.x_movements, self.y_movements = 0, 0
-           
+            
+    def set_next_states(self, next_state = STATES.IDLE, next_direction = DIRECTION.STILL, next_attack_state = ATTACK_MOVEMENT.NONE):
+        self.next_state = next_state
+        self.next_direction = next_direction
+        self.next_attack_state = next_attack_state
+        
+    def move(self):    
         self.x_position, self.y_position = self.x_position + self.x_movements, self.y_position + self.y_movements
         
-        if self.movement_counter != TICKS_PER_MOVEMENT:
-            self.movement_counter += 1
-            return 
-        
-        self.movement_counter = 0
         self.update_movement()
         
     
     def update_movement(self):
-        if self.state == STATES.MOVING:
+        if self.movement_counter != TICKS_PER_MOVEMENT:
+            self.movement_counter += 1
+            return 
+        
+        if self.state == STATES.ATTACK and self.attack_state == ATTACK_MOVEMENT.ATTACK2:
             if self.direction == DIRECTION.STILL:
-                self.movements = (0, 0)
+                self.x_movements, self.y_movements = 0, 0
             elif self.direction == DIRECTION.LEFT:
-                self.movements = (-PIXEL, 0)
+                self.x_movements, self.y_movements = -MOVEMENT_SPEED, 0
             elif self.direction == DIRECTION.RIGHT:
-                self.movements = (PIXEL, 0)
-    
+                self.x_movements, self.y_movements = MOVEMENT_SPEED, 0
+        else:
+            self.x_movements, self.y_movements = 0, 0
+            
+        self.movement_counter = 0
+            
     def update_state(self):
         if self.ticks != TICKS_PER_FRAME:
             self.ticks += 1
@@ -135,9 +141,9 @@ class GameObject():
         if self.state != self.next_state:
             self.state_counter = 0
         
-        self.state, self.next_state = self.next_state, STATES.IDLE
-        self.direction, self.next_direction = self.next_direction, DIRECTION.STILL
-        self.attack_state, self.next_attack_state = self.next_attack_state, ATTACK_MOVEMENT.NONE
+        self.state = self.next_state
+        self.direction = self.next_direction
+        self.attack_state = self.next_attack_state
 
         self.update_animation()
         

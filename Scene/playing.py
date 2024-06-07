@@ -11,8 +11,8 @@ class playing_scene:
         for role in self.roles:
             role.update()
     
-    # def interaction_arbitration(self):
-        
+    def interaction_arbitration(self):
+        pass
     
     def action_collect(self, main_scene):
         for event in pygame.event.get():
@@ -24,7 +24,11 @@ class playing_scene:
             
             e = event.dict['key']
             
-            if e == K_d:
+            if e == K_a:
+                self.roles[0].next_state = STATES.ATTACK
+                self.roles[0].next_attack_state = ATTACK_MOVEMENT.ATTACK2
+                self.roles[0].next_direction = DIRECTION.RIGHT
+            elif e == K_d:
                 self.roles[0].next_state = STATES.ATTACK
                 self.roles[0].next_attack_state = ATTACK_MOVEMENT.ATTACK1
             elif e == K_w:
@@ -32,6 +36,10 @@ class playing_scene:
             elif e == K_s:
                 self.roles[0].health -= 5
                 
+            elif e == K_LEFT:
+                self.roles[1].next_state = STATES.ATTACK
+                self.roles[1].next_attack_state = ATTACK_MOVEMENT.ATTACK2
+                self.roles[1].next_direction = DIRECTION.LEFT                
             elif e == K_RIGHT:
                 self.roles[1].next_state = STATES.ATTACK
                 self.roles[1].next_attack_state = ATTACK_MOVEMENT.ATTACK1
