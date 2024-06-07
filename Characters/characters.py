@@ -95,6 +95,8 @@ class GameObject():
     
     def __make_attack_image(self):
         if self.attack_state != ATTACK_MOVEMENT.NONE:
+            attack_sound = pygame.mixer.Sound(self.attack_sound)
+            attack_sound.play()
             self.attack_image = pygame.transform.scale(
                 pygame.image.load(f'{self.path}/{self.attack_state.name.lower()}_0.png').convert_alpha(), 
                 (300, 180)
@@ -200,6 +202,8 @@ class Dinosaur(GameObject, pygame.sprite.Sprite):
         self.path = './Characters/Dinosaur'
         self.race = 'dino'
         self.position = position
+
+        self.attack_sound = "sounds/fire2.wav"
         
         self.x_position, self.y_position = DINO_INIT_POSITION[position]['X'], DINO_INIT_POSITION[position]['Y']
         
