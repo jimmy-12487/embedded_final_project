@@ -2,6 +2,7 @@ import pygame
 import os
 from enums import *
 from configs import *
+import math
 
 ANIMATION_FRAMES = 20
 MOVEMENT_FRAMES = 5
@@ -130,7 +131,6 @@ class GameObject():
 
     
     def update_state(self):
-        print(self.state)
         if self.state != self.next_state:
             self.state_counter = 0
         self.state = self.next_state
