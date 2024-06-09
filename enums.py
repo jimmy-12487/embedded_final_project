@@ -6,7 +6,9 @@ class STATES(Enum):
     MOVING = 2
     ATTACK = 3
     DEFEND = 4
-    DIE = 5
+    FORWARD = 5
+    RETREAT = 6
+    DIE = 7
 
 class DIRECTION(Enum):
     STILL = 0
