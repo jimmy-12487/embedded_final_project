@@ -77,7 +77,7 @@ while(1):
         print("No response from Google Speech Recognition service: {0}".format(e))
         print(speak);
     if speak == "start":
-        send(Start.START.value)
+        send(f"{Start.START.value}|{volume}")
         break
 while(1):
     print("Google Speech Recognition thinks you said:");
@@ -86,12 +86,12 @@ while(1):
         speak = r.recognize_google(audio)
         if speak == "chicken":
             character = Start.CHICK.value
-            send(Start.CHICK.value)
+            send(f"{Start.CHICK.value}|{volume}")
         elif speak == "dinosaur":
             character = Start.DINO.value
-            send(Start.DINO.value)
+            send(f"{Start.DINO.value}|{volume}")
         if speak == "ready":
-            send(Start.READY.value)
+            send(f"{Start.READY.value}|{volume}")
             break
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
