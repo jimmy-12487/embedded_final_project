@@ -5,8 +5,10 @@ class STATES(Enum):
     IDLE = 1
     MOVING = 2
     ATTACK = 3
-    DEFEND = 4
-    DIE = 5
+    DEFENDING = 4
+    FORWARD = 5
+    RETREAT = 6
+    DIE = 7
 
 class DIRECTION(Enum):
     STILL = 0
@@ -23,9 +25,22 @@ class VOICE(IntEnum):
     CHICK = 1
     DINO = 2
     READY = 3
+    DEFEND = 4
+    ATTACK1 = 5
+    ATTACK2 = 6
 
 class ATTACK_MOVEMENT(Enum):
     NONE = 0
-    DEFEND = 1
-    ATTACK1 = 2
-    ATTACK2 = 3
+    DEFENDING = 1
+    ATTACK1 = 2 # fire
+    ATTACK2 = 3 # rush
+    
+class INTERACTION_RESPONSE(Enum):
+    NONE = 0
+    FORWARD_NOT_COLLIDE = 1
+    FORWARD_AND_COLLIDE = 2
+    ATTACK1 = 3
+    ATTACK2 = 4
+    RETREAT_NOT_GO_BACK = 5
+    RETREAT_AND_GO_BACK = 6
+    DEFEND = 7

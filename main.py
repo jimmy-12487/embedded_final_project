@@ -32,7 +32,7 @@ class MainGame():
         self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.main_clock = pygame.time.Clock()
         '''
-            set up scenes
+            set up scene
         '''
         self.scenes = [say_start_scene(), ready_scene()]
         
@@ -65,7 +65,6 @@ class MainGame():
             return None
         
         if action_response == True:
-            pygame.mixer.music.stop()
             self.game_state += 1
             
             if self.game_state == GAME_STATE.PLAYING:

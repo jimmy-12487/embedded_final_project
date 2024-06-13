@@ -8,11 +8,12 @@ class playing_scene:
         pass
     
     def update(self):
-        for role in self.roles:
-            role.update()
+        self.roles[0].update(self.roles[1])
+        self.roles[1].update(self.roles[0])
     
-    # def interaction_arbitration(self):
+    def interaction_arbitration(self):
         
+        pass
     
     def action_collect(self, main_scene):
         for event in pygame.event.get():
@@ -24,30 +25,59 @@ class playing_scene:
             
             e = event.dict['key']
             
-            if e == K_d:
-                self.roles[0].next_state = STATES.ATTACK
-                self.roles[0].next_attack_state = ATTACK_MOVEMENT.ATTACK1
+            if e == K_a:
+                self.roles[0].user_input = {'state': STATES.FORWARD, 
+                                            'direction': DIRECTION.RIGHT, 
+                                            'attack_movement': ATTACK_MOVEMENT.ATTACK2 }
+            elif e == K_d:
+                self.roles[0].user_input = {'state': STATES.ATTACK, 
+                                            'direction': DIRECTION.STILL, 
+                                            'attack_movement': ATTACK_MOVEMENT.ATTACK1 }
             elif e == K_w:
-                self.roles[0].health += 5
+                self.roles[0].user_input = {'state': STATES.IDLE, 
+                                            'direction': DIRECTION.STILL, 
+                                            'attack_movement': ATTACK_MOVEMENT.NONE }  
             elif e == K_s:
-                self.roles[0].health -= 5
+                self.roles[0].user_input = {'state': STATES.DEFENDING, 
+                                            'direction': DIRECTION.STILL, 
+                                            'attack_movement': ATTACK_MOVEMENT.NONE } 
                 
+            elif e == K_LEFT:
+                self.roles[1].user_input = {'state': STATES.FORWARD, 
+                                            'direction': DIRECTION.LEFT, 
+                                            'attack_movement': ATTACK_MOVEMENT.ATTACK2 }
             elif e == K_RIGHT:
-                self.roles[1].next_state = STATES.ATTACK
-                self.roles[1].next_attack_state = ATTACK_MOVEMENT.ATTACK1
+                self.roles[1].user_input = {'state': STATES.ATTACK, 
+                                            'direction': DIRECTION.STILL, 
+                                            'attack_movement': ATTACK_MOVEMENT.ATTACK1 }
             elif e == K_UP:
-                self.roles[1].health += 5
+                self.roles[1].user_input = {'state': STATES.IDLE, 
+                                            'direction': DIRECTION.STILL, 
+                                            'attack_movement': ATTACK_MOVEMENT.NONE } 
             elif e == K_DOWN:
-                self.roles[1].health -= 5
-            
-            if self.roles[0].health <= 11:
-                self.roles[0].next_state = STATES.DIE
-            if self.roles[1].health <= 11:
-                self.roles[1].next_state = STATES.DIE
-            if self.roles[0].state == STATES.DIE:
-                self.roles[0].next_state = STATES.DIE
-            if self.roles[1].state == STATES.DIE:
-                self.roles[1].next_state = STATES.DIE
+                self.roles[1].user_input = {'state': STATES.DEFENDING, 
+                                            'direction': DIRECTION.STILL, 
+                                            'attack_movement': ATTACK_MOVEMENT.NONE } 
+        
+        for v in main_scene.user_input.values():
+            if v['input'] == VOICE.DEFEND:
+                self.roles[v['index']].user_input = {
+                    'state': STATES.DEFENDING, 
+                    'direction': DIRECTION.STILL, 
+                    'attack_movement': ATTACK_MOVEMENT.NONE 
+                } 
+            elif v['input'] == VOICE.ATTACK1:
+                self.roles[v['index']].user_input = {
+                    'state': STATES.ATTACK, 
+                    'direction': DIRECTION.STILL, 
+                    'attack_movement': ATTACK_MOVEMENT.ATTACK1 
+                }
+            elif v['input'] == VOICE.ATTACK2:
+                self.roles[v['index']].user_input = {
+                    'state': STATES.FORWARD, 
+                    'direction': DIRECTION.LEFT, 
+                    'attack_movement': ATTACK_MOVEMENT.ATTACK2 
+                }
             
         return False
     
@@ -55,6 +85,13 @@ class playing_scene:
         objects = []
         for role in self.roles:
             objects += role.get_objects()
-            
+        for role in self.roles:
+            attack = role.get_attack_animation()
+            defend = role.get_defend_animation()
+            if attack is not None:
+                objects.append(attack)
+            if defend is not None:
+                objects.append(defend)
+                
         return objects
         

@@ -6,7 +6,10 @@ from configs import *
 
 class player_choosing:
     def __init__(self, is_left):
-        self.pick_states = ['chick', 'dino_picked']
+        if is_left:
+            self.pick_states = ['chick_picked', 'dino']
+        else:
+            self.pick_states = ['chick', 'dino_picked']
         self.ready = False
         self.position = 'LEFT' if is_left else 'RIGHT'
         self.available_characters_raw = [pygame.image.load(f'Ready/{state}.png').convert_alpha() for state in self.pick_states]

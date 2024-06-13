@@ -11,9 +11,9 @@ class Start(Enum):
     READY = 3
 
 class Movement(Enum):
-    DEFEND = 0
-    ATTACK1 = 1
-    ATTACK2 = 2
+    DEFEND = 4
+    ATTACK1 = 5
+    ATTACK2 = 6
 
 HEADER = 64
 PORT = 5050
