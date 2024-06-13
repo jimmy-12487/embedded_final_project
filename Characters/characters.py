@@ -4,6 +4,7 @@ import random
 import math
 from enums import *
 from configs import *
+import math
 
 # ** TODO
 class GameObjectState():
@@ -458,6 +459,8 @@ class Dinosaur(GameObject, pygame.sprite.Sprite):
         self.path = './Characters/Dinosaur'
         self.race = 'dino'
         self.position = position
+
+        self.attack_sound = "sounds/fire2.wav"
         
         self.initial_x_position, self.initial_y_position = self.x_position, self.y_position = DINO_INIT_POSITION[position]['X'], DINO_INIT_POSITION[position]['Y']
         

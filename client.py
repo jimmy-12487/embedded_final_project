@@ -5,18 +5,18 @@ import os
 from enum import Enum
 
 class Start(Enum):
-    IDLE = 0
+    START = 0
     CHICK = 1
     DINO = 2
     READY = 3
 
 class Movement(Enum):
-    DEFEND = 0
-    ATTACK1 = 1
-    ATTACK2 = 2
+    DEFEND = 4
+    ATTACK1 = 5
+    ATTACK2 = 6
 
 HEADER = 64
-PORT = 5050
+PORT = 5055
 FORMAT = 'UTF-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 # Whatever IP address you found from running ifconfig in terminal.
@@ -36,7 +36,7 @@ def send(msg):
     send_length += b' ' * (HEADER - len(send_length))
     client.send(send_length)
     client.send(message)
-    print(client.recv(2048).decode(FORMAT))
+    
 
 def get_audio_with_minimum_volume(min_value=125):
     with sr.Microphone() as source:
@@ -58,17 +58,18 @@ def get_audio_with_minimum_volume(min_value=125):
             # If the volume level is greater than the threshold, break the loop
             if average_volume > min_value:
                 print("Loud enough sound detected!")
-                return audio
+                return audio, average_volume
 #obtain audio from the microphone
 r=sr.Recognizer() 
 
 
 # recognize speech using Google Speech Recognition 
-character = Start.IDLE.value
+speak = ""
+character = Start.CHICK.value
 while(1):
     print("Google Speech Recognition thinks you said:");
-    audio = get_audio_with_minimum_volume()
     try:
+        audio, volume = get_audio_with_minimum_volume()
         speak = r.recognize_google(audio)
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
@@ -76,41 +77,39 @@ while(1):
         print("No response from Google Speech Recognition service: {0}".format(e))
         print(speak);
     if speak == "start":
-        character = Start.CHICK.value
-        send(Start.CHICK.value)
+        send(f"{Start.START.value}|{volume}")
         break
 while(1):
     print("Google Speech Recognition thinks you said:");
-    audio = get_audio_with_minimum_volume()
     try:
+        audio, volume = get_audio_with_minimum_volume()
         speak = r.recognize_google(audio)
         if speak == "chicken":
             character = Start.CHICK.value
-            send(Start.CHICK.value)
+            send(f"{Start.CHICK.value}|{volume}")
         elif speak == "dinosaur":
             character = Start.DINO.value
-            send(Start.DINO.value)
-        if speak == "ready":          
-            send(Start.READY.value)
+            send(f"{Start.DINO.value}|{volume}")
+        if speak == "ready":
+            send(f"{Start.READY.value}|{volume}")
             break
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
     except sr.RequestError as e:
         print("No response from Google Speech Recognition service: {0}".format(e))
-        
 if character == Start.CHICK.value: 
     while(1):
         #receive stop
         print("Google Speech Recognition thinks you said:")
-        audio = get_audio_with_minimum_volume()
         try:
+            audio, volume = get_audio_with_minimum_volume()
             speak = r.recognize_google(audio)
             if speak == "defend":
-                send(f"{Movement.DEFEND.value}")
+                send(f"{Movement.DEFEND.value}|{volume}")
             elif speak == "throw":
-                send(f"{Movement.ATTACK1.value}")
-            elif speak == "hit":
-                send(f"{Movement.ATTACK2.value}")
+                send(f"{Movement.ATTACK1.value}|{volume}")
+            elif speak == "waffle":
+                send(f"{Movement.ATTACK2.value}|{volume}")
         except sr.UnknownValueError:
             print("Google Speech Recognition could not understand audio")
         except sr.RequestError as e:
@@ -120,15 +119,15 @@ if character == Start.DINO.value: # Dino
     while(1):
         #receive stop
         print("Google Speech Recognition thinks you said:")
-        audio = get_audio_with_minimum_volume()
-        speak = r.recognize_google(audio)
         try:
+            audio, volume = get_audio_with_minimum_volume()
+            speak = r.recognize_google(audio)
             if speak == "defend":
-                send(f"{Movement.DEFEND.value}")
+                send(f"{Movement.DEFEND.value}|{volume}")
             elif speak == "fire":
-                send(f"{Movement.ATTACK1.value}")
-            elif speak == "stratch":
-                send(f"{Movement.ATTACK2.value}")
+                send(f"{Movement.ATTACK1.value}|{volume}")
+            elif speak == "scratch":
+                send(f"{Movement.ATTACK2.value}|{volume}")
         except sr.UnknownValueError:
             print("Google Speech Recognition could not understand audio")
         except sr.RequestError as e:
