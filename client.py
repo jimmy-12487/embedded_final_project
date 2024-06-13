@@ -5,7 +5,7 @@ import os
 from enum import Enum
 
 class Start(Enum):
-    IDLE = 0
+    START = 0
     CHICK = 1
     DINO = 2
     READY = 3
@@ -21,7 +21,7 @@ FORMAT = 'UTF-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 # Whatever IP address you found from running ifconfig in terminal.
 # SERVER = ""
-SERVER = '192.168.0.72'
+SERVER = '192.168.0.73'
 
 ADDR = (SERVER, PORT)
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -64,7 +64,8 @@ r=sr.Recognizer()
 
 
 # recognize speech using Google Speech Recognition 
-character = Start.IDLE.value
+speak = ""
+character = Start.START.value
 while(1):
     print("Google Speech Recognition thinks you said:");
     audio = get_audio_with_minimum_volume()
@@ -76,7 +77,7 @@ while(1):
         print("No response from Google Speech Recognition service: {0}".format(e))
         print(speak);
     if speak == "start":
-        character = Start.CHICK.value
+        character = Start.START.value
         send(Start.CHICK.value)
         break
 while(1):
@@ -90,7 +91,7 @@ while(1):
         elif speak == "dinosaur":
             character = Start.DINO.value
             send(Start.DINO.value)
-        if speak == "ready":          
+        if speak == "ready":
             send(Start.READY.value)
             break
     except sr.UnknownValueError:
