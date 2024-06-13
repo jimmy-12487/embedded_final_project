@@ -58,7 +58,7 @@ def get_audio_with_minimum_volume(min_value=125):
             # If the volume level is greater than the threshold, break the loop
             if average_volume > min_value:
                 print("Loud enough sound detected!")
-                return audio
+                return audio, average_volume
 #obtain audio from the microphone
 r=sr.Recognizer() 
 
@@ -69,7 +69,7 @@ character = Start.CHICK.value
 while(1):
     print("Google Speech Recognition thinks you said:");
     try:
-        audio = get_audio_with_minimum_volume()
+        audio, volume = get_audio_with_minimum_volume()
         speak = r.recognize_google(audio)
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
@@ -82,11 +82,8 @@ while(1):
 while(1):
     print("Google Speech Recognition thinks you said:");
     try:
-        audio = get_audio_with_minimum_volume()
+        audio, volume = get_audio_with_minimum_volume()
         speak = r.recognize_google(audio)
-        if isinstance(speak, dict):
-            print("ojj\nojj\nojj\nojj\n\n\n\n\n")
-            speak = speak["alternative"][0]["transcript"]
         if speak == "chicken":
             character = Start.CHICK.value
             send(Start.CHICK.value)
@@ -105,14 +102,14 @@ if character == Start.CHICK.value:
         #receive stop
         print("Google Speech Recognition thinks you said:")
         try:
-            audio = get_audio_with_minimum_volume()
+            audio, volume = get_audio_with_minimum_volume()
             speak = r.recognize_google(audio)
             if speak == "defend":
-                send(f"{Movement.DEFEND.value}")
+                send(f"{Movement.DEFEND.value}|{volume}")
             elif speak == "throw":
-                send(f"{Movement.ATTACK1.value}")
-            elif speak == "hit":
-                send(f"{Movement.ATTACK2.value}")
+                send(f"{Movement.ATTACK1.value}|{volume}")
+            elif speak == "waffle":
+                send(f"{Movement.ATTACK2.value}|{volume}")
         except sr.UnknownValueError:
             print("Google Speech Recognition could not understand audio")
         except sr.RequestError as e:
@@ -123,14 +120,14 @@ if character == Start.DINO.value: # Dino
         #receive stop
         print("Google Speech Recognition thinks you said:")
         try:
-            audio = get_audio_with_minimum_volume()
+            audio, volume = get_audio_with_minimum_volume()
             speak = r.recognize_google(audio)
             if speak == "defend":
-                send(f"{Movement.DEFEND.value}")
+                send(f"{Movement.DEFEND.value}|{volume}")
             elif speak == "fire":
-                send(f"{Movement.ATTACK1.value}")
+                send(f"{Movement.ATTACK1.value}|{volume}")
             elif speak == "scratch":
-                send(f"{Movement.ATTACK2.value}")
+                send(f"{Movement.ATTACK2.value}|{volume}")
         except sr.UnknownValueError:
             print("Google Speech Recognition could not understand audio")
         except sr.RequestError as e:
