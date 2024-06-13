@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import math
 from enums import *
 from configs import *
 
@@ -35,6 +36,9 @@ class GameObject():
         
         self.attack_state = ATTACK_MOVEMENT.NONE
         self.next_attack_state = ATTACK_MOVEMENT.NONE
+        
+        self.volumn = 0
+        self.next_volumn = 0
         
         self.ticks = 0
         
@@ -76,7 +80,10 @@ class GameObject():
             
     def __far_attack(self):
         if self.race == 'chick' and self.attack_state == ATTACK_MOVEMENT.ATTACK1:
-            self.egg_x_position += 30
+            if self.position == 'LEFT':
+                self.egg_x_position += 50
+            else:
+                self.egg_x_position -= 50
             self.attack_left_position, self.attack_right_position = self.egg_x_position, self.egg_x_position + CHICKEN_EGG_WIDTH
             
     def __next_frame(self):
@@ -111,7 +118,7 @@ class GameObject():
             if self.position == 'LEFT' :
                 return (self.x_position + self.width - 100, self.y_position)
             else:
-                return (self.x_position + 100, self.y_position)
+                return (self.x_position - CHICKEN_EGG_WIDTH, self.y_position)
         elif self.race == 'dino':
             if self.position == 'LEFT' :
                 return (self.x_position + self.width - 200, self.y_position)
@@ -218,7 +225,8 @@ class GameObject():
     def set_next_states(self, _it,
                         next_state = STATES.IDLE,
                         next_direction = DIRECTION.STILL,
-                        next_attack_state = ATTACK_MOVEMENT.NONE):
+                        next_attack_state = ATTACK_MOVEMENT.NONE,
+                        next_volumn = 0):
         
         if self.health <= 0:
             self.next_state, self.next_direction, self.next_attack_state = STATES.DIE, DIRECTION.STILL, ATTACK_MOVEMENT.NONE
@@ -228,25 +236,26 @@ class GameObject():
         
         if response == INTERACTION_RESPONSE.NONE:
             if self.user_input == {}:
-                self.next_state, self.next_direction, self.next_attack_state = next_state, next_direction, next_attack_state
+                self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = next_state, next_direction, next_attack_state, next_volumn
             else:
-                self.next_state, self.next_direction, self.next_attack_state = self.user_input['state'], self.user_input['direction'], self.user_input['attack_movement']
+                self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = self.user_input['state'], self.user_input['direction'], self.user_input['attack_movement'], self.user_input['volumn']
 
         elif response == INTERACTION_RESPONSE.FORWARD_AND_COLLIDE:
-            self.next_state, self.next_direction, self.next_attack_state = STATES.ATTACK, self.direction, self.attack_state
+            self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = STATES.ATTACK, self.direction, self.attack_state, self.volumn
         elif response == INTERACTION_RESPONSE.FORWARD_NOT_COLLIDE:
-            self.next_state, self.next_direction, self.next_attack_state = self.state, self.direction, self.attack_state
+            self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = self.state, self.direction, self.attack_state, self.volumn
         elif response == INTERACTION_RESPONSE.ATTACK1:
             self.deal_damage(_it, self.attack1_damage)
-            self.next_state, self.next_direction, self.next_attack_state = STATES.IDLE, DIRECTION.STILL, ATTACK_MOVEMENT.NONE
+            self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = STATES.IDLE, DIRECTION.STILL, ATTACK_MOVEMENT.NONE, self.volumn
         elif response == INTERACTION_RESPONSE.ATTACK2:
-            self.deal_damage(_it, self.attack2_damage)
-            self.next_state, self.next_direction, self.next_attack_state = STATES.RETREAT, self.direction, ATTACK_MOVEMENT.NONE
+            power = math.sqrt(abs(self.x_position - self.initial_x_position) / abs(self.initial_x_position - _it.initial_x_position) )
+            self.deal_damage(_it, int(self.attack2_damage * power))
+            self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = STATES.RETREAT, self.direction, ATTACK_MOVEMENT.NONE, self.volumn
         elif response == INTERACTION_RESPONSE.RETREAT_AND_GO_BACK:
             self.state_interupt = True
-            self.next_state, self.next_direction, self.next_attack_state = STATES.IDLE, DIRECTION.STILL, ATTACK_MOVEMENT.NONE
+            self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = STATES.IDLE, DIRECTION.STILL, ATTACK_MOVEMENT.NONE, 0
         elif response == INTERACTION_RESPONSE.RETREAT_NOT_GO_BACK:
-                self.next_state, self.next_direction, self.next_attack_state = self.state, self.direction, self.attack_state
+            self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = self.state, self.direction, self.attack_state, 0
             
                 
             
@@ -308,7 +317,7 @@ class GameObject():
             self.x_movements, self.y_movements = MOVEMENT_SPEED, 0
         
         if self.race == 'chick':
-            self.x_movements = 1.5 * self.x_movements
+            self.x_movements = 3 * self.x_movements
             
         if self.state == STATES.RETREAT:
             self.x_movements = - 2 * self.x_movements
@@ -339,7 +348,7 @@ class GameObject():
             self.state_counter = 0
         else:
             self.state_counter += 1
-        self.state, self.direction, self.attack_state = self.next_state, self.next_direction, self.next_attack_state
+        self.state, self.direction, self.attack_state, self.volumn = self.next_state, self.next_direction, self.next_attack_state, self.next_volumn
 
         if self.state_counter >= self.state_frame_num[self.state.name]:
             self.state_counter = 0        
@@ -429,14 +438,16 @@ class Chicken(GameObject, pygame.sprite.Sprite):
         self.path = './Characters/Chicken'
         self.race = 'chick'
         self.position = position
-    
-        self.egg_x_position, self.egg_y_position = self.initial_x_position, self.initial_y_position = self.x_position, self.y_position = CHICKEN_INIT_POSITION[position]['X'], CHICKEN_INIT_POSITION[position]['Y']
         
+        self.egg_x_position, self.egg_y_position = self.initial_x_position, self.initial_y_position = self.x_position, self.y_position = CHICKEN_INIT_POSITION[position]['X'], CHICKEN_INIT_POSITION[position]['Y']
+        if position == 'RIGHT':
+            self.egg_x_position -= CHICKEN_EGG_WIDTH
+            
         self.width, self.height = CHICKEN_WIDTH, CHICKEN_HEIGHT
         
-        self.health, self.health_unit = 100, 10
-        self.attack1_damage = random.randint(5, 10)
-        self.attack2_damage = random.randint(30, 50)
+        self.health, self.health_unit = 500, 50
+        self.attack1_damage = random.randint(50, 60)
+        self.attack2_damage = random.randint(60, 100)
         
         super().__init__()
         
@@ -452,9 +463,9 @@ class Dinosaur(GameObject, pygame.sprite.Sprite):
         
         self.width, self.height = DINO_WIDTH, DINO_HEIGHT
         
-        self.health, self.health_unit = 200, 20
-        self.attack1_damage = random.randint(1, 10)
-        self.attack2_damage = random.randint(30, 70)        
+        self.health, self.health_unit = 1000, 100
+        self.attack1_damage = random.randint(20, 80)
+        self.attack2_damage = random.randint(50, 120)        
         
         super().__init__()
         

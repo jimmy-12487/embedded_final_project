@@ -60,25 +60,31 @@ class playing_scene:
                                             'attack_movement': ATTACK_MOVEMENT.NONE } 
         
         for v in main_scene.user_input.values():
+            dir = DIRECTION.RIGHT if v['index'] == 0 else DIRECTION.LEFT
             if v['input'] == VOICE.DEFEND:
                 self.roles[v['index']].user_input = {
                     'state': STATES.DEFENDING, 
                     'direction': DIRECTION.STILL, 
-                    'attack_movement': ATTACK_MOVEMENT.NONE 
+                    'attack_movement': ATTACK_MOVEMENT.NONE,
+                    'volumn': v['volumn']
                 } 
             elif v['input'] == VOICE.ATTACK1:
                 self.roles[v['index']].user_input = {
                     'state': STATES.ATTACK, 
                     'direction': DIRECTION.STILL, 
-                    'attack_movement': ATTACK_MOVEMENT.ATTACK1 
+                    'attack_movement': ATTACK_MOVEMENT.ATTACK1,
+                    'volumn': v['volumn']
                 }
             elif v['input'] == VOICE.ATTACK2:
                 self.roles[v['index']].user_input = {
                     'state': STATES.FORWARD, 
-                    'direction': DIRECTION.LEFT, 
-                    'attack_movement': ATTACK_MOVEMENT.ATTACK2 
+                    'direction': dir, 
+                    'attack_movement': ATTACK_MOVEMENT.ATTACK2,
+                    'volumn': v['volumn']
                 }
-            
+            else:
+                self.roles[v['index']].user_input = {}
+            v['input'] = ''
         return False
     
     def get_objects(self):

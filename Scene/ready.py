@@ -9,7 +9,7 @@ class player_choosing:
         if is_left:
             self.pick_states = ['chick_picked', 'dino']
         else:
-            self.pick_states = ['chick', 'dino_picked']
+            self.pick_states = ['chick_picked', 'dino']
         self.ready = False
         self.position = 'LEFT' if is_left else 'RIGHT'
         self.available_characters_raw = [pygame.image.load(f'Ready/{state}.png').convert_alpha() for state in self.pick_states]
@@ -79,7 +79,13 @@ class ready_scene:
                 self.players[v['index']].pick_states = ['chick_picked', 'dino']
             elif v['input'] == VOICE.DINO:
                 self.players[v['index']].pick_states = ['chick', 'dino_picked']
-                
+        
+        if all(p.ready for p in self.players):
+            main_scene.player_status = [(0, p.position) if 'chick_picked' in p.pick_states else (1, p.position) for p in self.players]
+            for k, v in main_scene.user_input.items():
+                main_scene.user_input[k]['input'] = ''
+            return True
+        
         return False
     
     def get_objects(self):

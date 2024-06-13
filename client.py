@@ -21,7 +21,7 @@ FORMAT = 'UTF-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 # Whatever IP address you found from running ifconfig in terminal.
 # SERVER = ""
-SERVER = '192.168.0.72'
+SERVER = '192.168.0.73'
 
 ADDR = (SERVER, PORT)
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -97,6 +97,7 @@ while(1):
         print("Google Speech Recognition could not understand audio")
     except sr.RequestError as e:
         print("No response from Google Speech Recognition service: {0}".format(e))
+        
 if character == Start.CHICK.value: 
     while(1):
         #receive stop

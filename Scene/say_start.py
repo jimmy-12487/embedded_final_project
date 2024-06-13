@@ -69,8 +69,12 @@ class say_start_scene:
                 self.say_start_raw_alpha = 255
                 self.start = 1
             
-        
-        return all(v['input'] == VOICE.START for v in main_scene.user_input.values()) and len(main_scene.user_input) >= 2
+        if all(v['input'] == VOICE.START for v in main_scene.user_input.values()) and len(main_scene.user_input) >= 2:
+            for k, v in main_scene.user_input.items():
+                main_scene.user_input[k]['input'] = ''
+            return True
+            
+        return False
         
 
     def get_objects(self):

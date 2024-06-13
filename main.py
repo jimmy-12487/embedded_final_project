@@ -16,8 +16,8 @@ import socket
 
 HEADER = 64
 PORT = 5050
-# SERVER = '192.168.0.72'
-SERVER = '172.18.9.153'
+SERVER = '192.168.0.73'
+# SERVER = '172.18.9.153'
 ADDR = (SERVER, PORT)
 FORMAT = 'UTF-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -68,24 +68,22 @@ class MainGame():
             self.game_state += 1
             
             if self.game_state == GAME_STATE.PLAYING:
-                print(self.player_status)
                 self.scenes.append(playing_scene([self.__create_role(ps) for ps in self.player_status]))
             
             self.current_scene = self.scenes[self.game_state]
-            for k, v in self.user_input.items():
-                self.user_input[k]['input'] = ''
             return True
     
         return False
     
     def play_music(self):
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(-1)
 
     def start(self):  
         self.idx = 0
         self.play_music()
         while True:
-            if self.idx % 1e6 == 0:
+            if self.idx % 100 == 0:
+                print(len(self.user_input))
                 for k, v in self.user_input.items():
                     print(k, v)
             self.__update()
@@ -101,7 +99,7 @@ class MainGame():
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
     IP, port = addr
-    game.user_input[f'{IP}:{port}'] = {'index': len(game.user_input), 'input': ''}
+    game.user_input[f'{IP}:{port}'] = {'index': len(game.user_input), 'input': '', 'volumn': 0}
     connected = True
     try:
         while connected:
@@ -110,17 +108,21 @@ def handle_client(conn, addr):
                 msg_length = int(msg_length)
                 msg = conn.recv(msg_length).decode(FORMAT)
                 
+                try:
+                    input_command, volumn = msg.split('|')
+                    if game.user_input[f'{IP}:{port}']['input'] == VOICE.START:
+                        continue
+                    else:
+                        game.user_input[f'{IP}:{port}']['input'] = int(input_command)
+                        game.user_input[f'{IP}:{port}']['volumn'] = float(volumn)
+                except Exception as e:
+                    print('fuck you this is invalid ', msg)
+                    print(e)
+                    
                 
-                
-                if game.user_input[f'{IP}:{port}']['input'] == VOICE.START:
-                    continue
-                else:
-                    game.user_input[f'{IP}:{port}']['input'] = int(msg)
+
                 if msg == DISCONNECT_MESSAGE:
                     break    
-                
-                print(f"[{addr}] {msg}")
-            conn.send("Msg received".encode(FORMAT))
 
         conn.close()
     except:
