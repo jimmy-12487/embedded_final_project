@@ -15,7 +15,7 @@ import threading
 import socket
 
 HEADER = 64
-PORT = 5050
+PORT = 5055
 SERVER = '192.168.0.73'
 # SERVER = '172.18.9.153'
 ADDR = (SERVER, PORT)

@@ -246,11 +246,11 @@ class GameObject():
         elif response == INTERACTION_RESPONSE.FORWARD_NOT_COLLIDE:
             self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = self.state, self.direction, self.attack_state, self.volumn
         elif response == INTERACTION_RESPONSE.ATTACK1:
-            self.deal_damage(_it, self.attack1_damage)
+            self.deal_damage(_it, int(self.attack1_damage * (self.volumn - 125)))
             self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = STATES.IDLE, DIRECTION.STILL, ATTACK_MOVEMENT.NONE, self.volumn
         elif response == INTERACTION_RESPONSE.ATTACK2:
             power = math.sqrt(abs(self.x_position - self.initial_x_position) / abs(self.initial_x_position - _it.initial_x_position) )
-            self.deal_damage(_it, int(self.attack2_damage * power))
+            self.deal_damage(_it, int(self.attack2_damage * power * (self.volumn - 125)))
             self.next_state, self.next_direction, self.next_attack_state, self.next_volumn = STATES.RETREAT, self.direction, ATTACK_MOVEMENT.NONE, self.volumn
         elif response == INTERACTION_RESPONSE.RETREAT_AND_GO_BACK:
             self.state_interupt = True
@@ -271,6 +271,13 @@ class GameObject():
     def handle_damage(self, dmg):
         
         if self.state == STATES.DEFENDING:
+            self.damage_tick = 1
+            self.dmg_img = [
+                pygame.transform.scale(
+                    pygame.image.load(f'./Characters/DamageFont/resist.png').convert_alpha(),
+                    (RESIST_WIDTH, RESIST_HEIGHT)
+                )
+            ]
             return
         self.damage_tick = 1
         self.hurt_in_this_frame = True
@@ -446,7 +453,7 @@ class Chicken(GameObject, pygame.sprite.Sprite):
             
         self.width, self.height = CHICKEN_WIDTH, CHICKEN_HEIGHT
         
-        self.health, self.health_unit = 500, 50
+        self.health, self.health_unit = 1000, 100
         self.attack1_damage = random.randint(50, 60)
         self.attack2_damage = random.randint(60, 100)
         
@@ -466,7 +473,7 @@ class Dinosaur(GameObject, pygame.sprite.Sprite):
         
         self.width, self.height = DINO_WIDTH, DINO_HEIGHT
         
-        self.health, self.health_unit = 1000, 100
+        self.health, self.health_unit = 1500, 150
         self.attack1_damage = random.randint(20, 80)
         self.attack2_damage = random.randint(50, 120)        
         

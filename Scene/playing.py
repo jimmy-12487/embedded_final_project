@@ -28,36 +28,44 @@ class playing_scene:
             if e == K_a:
                 self.roles[0].user_input = {'state': STATES.FORWARD, 
                                             'direction': DIRECTION.RIGHT, 
-                                            'attack_movement': ATTACK_MOVEMENT.ATTACK2 }
+                                            'attack_movement': ATTACK_MOVEMENT.ATTACK2,
+                                            'volumn': 126}
             elif e == K_d:
                 self.roles[0].user_input = {'state': STATES.ATTACK, 
                                             'direction': DIRECTION.STILL, 
-                                            'attack_movement': ATTACK_MOVEMENT.ATTACK1 }
+                                            'attack_movement': ATTACK_MOVEMENT.ATTACK1,
+                                            'volumn': 126 }
             elif e == K_w:
                 self.roles[0].user_input = {'state': STATES.IDLE, 
                                             'direction': DIRECTION.STILL, 
-                                            'attack_movement': ATTACK_MOVEMENT.NONE }  
+                                            'attack_movement': ATTACK_MOVEMENT.NONE,
+                                            'volumn': 126 }  
             elif e == K_s:
                 self.roles[0].user_input = {'state': STATES.DEFENDING, 
                                             'direction': DIRECTION.STILL, 
-                                            'attack_movement': ATTACK_MOVEMENT.NONE } 
+                                            'attack_movement': ATTACK_MOVEMENT.NONE,
+                                            'volumn': 126 } 
                 
             elif e == K_LEFT:
                 self.roles[1].user_input = {'state': STATES.FORWARD, 
                                             'direction': DIRECTION.LEFT, 
-                                            'attack_movement': ATTACK_MOVEMENT.ATTACK2 }
+                                            'attack_movement': ATTACK_MOVEMENT.ATTACK2,
+                                            'volumn': 126 }
             elif e == K_RIGHT:
                 self.roles[1].user_input = {'state': STATES.ATTACK, 
                                             'direction': DIRECTION.STILL, 
-                                            'attack_movement': ATTACK_MOVEMENT.ATTACK1 }
+                                            'attack_movement': ATTACK_MOVEMENT.ATTACK1,
+                                            'volumn': 126 }
             elif e == K_UP:
                 self.roles[1].user_input = {'state': STATES.IDLE, 
                                             'direction': DIRECTION.STILL, 
-                                            'attack_movement': ATTACK_MOVEMENT.NONE } 
+                                            'attack_movement': ATTACK_MOVEMENT.NONE,
+                                            'volumn': 126 } 
             elif e == K_DOWN:
                 self.roles[1].user_input = {'state': STATES.DEFENDING, 
                                             'direction': DIRECTION.STILL, 
-                                            'attack_movement': ATTACK_MOVEMENT.NONE } 
+                                            'attack_movement': ATTACK_MOVEMENT.NONE,
+                                            'volumn': 126 } 
         
         for v in main_scene.user_input.values():
             dir = DIRECTION.RIGHT if v['index'] == 0 else DIRECTION.LEFT
