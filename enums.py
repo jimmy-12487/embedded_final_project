@@ -9,7 +9,8 @@ class STATES(Enum):
     FORWARD = 5
     RETREAT = 6
     DIE = 7
-
+    DONE = -1
+    
 class DIRECTION(Enum):
     STILL = 0
     LEFT = 1
